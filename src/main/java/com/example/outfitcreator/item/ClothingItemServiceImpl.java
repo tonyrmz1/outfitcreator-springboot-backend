@@ -92,13 +92,19 @@ public class ClothingItemServiceImpl implements ClothingItemService {
         // Upload photo if provided
         if (photo != null && !photo.isEmpty()) {
             try {
+                log.info("Uploading photo for item {}, original filename: {}, size: {} bytes", 
+                        item.getId(), photo.getOriginalFilename(), photo.getSize());
                 String photoPath = photoService.uploadPhoto(photo, item.getId());
+                log.info("Photo uploaded successfully to: {}", photoPath);
                 item.setPhotoPath(photoPath);
                 item = clothingItemRepository.save(item);
+                log.info("Item {} updated with photo path", item.getId());
             } catch (IOException e) {
                 log.error("Failed to upload photo for item {}", item.getId(), e);
                 throw new RuntimeException("Failed to upload photo", e);
             }
+        } else {
+            log.info("No photo provided for item {}", item.getId());
         }
 
         // Create audit log
@@ -310,8 +316,8 @@ public class ClothingItemServiceImpl implements ClothingItemService {
         if (photoPath == null) {
             return null;
         }
-        // Extract filename from path
-        String filename = photoPath.substring(photoPath.lastIndexOf('/') + 1);
+        // Extract filename from path (handle both / and \ separators)
+        String filename = photoPath.replace("\\", "/").substring(photoPath.replace("\\", "/").lastIndexOf('/') + 1);
         return String.format("%s/api/photos/%s", baseUrl, filename);
     }
 

@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/photos")
+@CrossOrigin(origins = {"http://localhost:3001", "http://localhost:3000", "http://localhost:4200"}, allowCredentials = "true")
 @Tag(name = "Photos", description = "Photo retrieval endpoints for clothing item images")
 public class PhotoController {
 
@@ -69,10 +71,12 @@ public class PhotoController {
         try {
             // Construct the file path
             Path filePath = Paths.get(basePath, "photos", filename);
+            
+            log.info("Attempting to load photo from: {}", filePath.toAbsolutePath());
 
             // Check if file exists
             if (!Files.exists(filePath)) {
-                log.warn("Photo not found: {}", filename);
+                log.warn("Photo not found at: {}", filePath.toAbsolutePath());
                 return ResponseEntity.notFound().build();
             }
 
@@ -80,7 +84,7 @@ public class PhotoController {
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists() || !resource.isReadable()) {
-                log.warn("Photo not readable: {}", filename);
+                log.warn("Photo not readable: {}", filePath.toAbsolutePath());
                 return ResponseEntity.notFound().build();
             }
 
@@ -90,9 +94,11 @@ public class PhotoController {
                 contentType = "application/octet-stream";
             }
 
+            log.info("Successfully serving photo: {}", filename);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
                     .body(resource);
 
         } catch (IOException e) {

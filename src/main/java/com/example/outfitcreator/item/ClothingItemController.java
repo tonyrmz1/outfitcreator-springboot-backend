@@ -68,7 +68,7 @@ public class ClothingItemController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ClothingItemDTO> createClothingItem(
-            @Valid @ModelAttribute CreateClothingItemRequest request,
+            @Valid @ModelAttribute CreateClothingItemRequest data,
             @Parameter(description = "Photo file (JPEG, PNG, or GIF, max 5MB)")
             @RequestParam(value = "photo", required = false) MultipartFile photo,
             Authentication authentication) {
@@ -76,7 +76,19 @@ public class ClothingItemController {
         Long userId = extractUserId(authentication);
         log.info("Creating clothing item for user {}", userId);
 
-        ClothingItemDTO created = clothingItemService.create(userId, request, photo);
+        ClothingItemDTO created = clothingItemService.create(userId, data, photo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ClothingItemDTO> createClothingItemJson(
+            @Valid @RequestBody CreateClothingItemRequest request,
+            Authentication authentication) {
+
+        Long userId = extractUserId(authentication);
+        log.info("Creating clothing item for user {}", userId);
+
+        ClothingItemDTO created = clothingItemService.create(userId, request, null);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

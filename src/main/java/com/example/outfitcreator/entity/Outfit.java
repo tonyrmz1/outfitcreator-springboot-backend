@@ -43,6 +43,7 @@ public class Outfit {
     private List<OutfitItem> items = new ArrayList<>();
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isComplete = true;
 
     @Column
@@ -52,8 +53,19 @@ public class Outfit {
     private Double fitCompatibilityScore;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
