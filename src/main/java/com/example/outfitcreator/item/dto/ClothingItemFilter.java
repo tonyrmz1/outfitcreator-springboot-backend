@@ -15,4 +15,5 @@ public class ClothingItemFilter {
     private ClothingCategory category;
     private Season season;
     private String color;
+    private String searchQuery;
 }

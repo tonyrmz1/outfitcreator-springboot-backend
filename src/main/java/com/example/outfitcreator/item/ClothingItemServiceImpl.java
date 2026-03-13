@@ -247,6 +247,14 @@ public class ClothingItemServiceImpl implements ClothingItemService {
                 if (filter.getColor() != null) {
                     predicates.add(criteriaBuilder.equal(root.get("primaryColor"), filter.getColor()));
                 }
+                if (filter.getSearchQuery() != null && !filter.getSearchQuery().trim().isEmpty()) {
+                    String searchPattern = "%" + filter.getSearchQuery().toLowerCase() + "%";
+                    Predicate namePredicate = criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("name")), searchPattern);
+                    Predicate brandPredicate = criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("brand")), searchPattern);
+                    predicates.add(criteriaBuilder.or(namePredicate, brandPredicate));
+                }
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

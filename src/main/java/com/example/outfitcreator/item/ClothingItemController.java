@@ -116,6 +116,8 @@ public class ClothingItemController {
             @RequestParam(required = false) Season season,
             @Parameter(description = "Filter by primary color")
             @RequestParam(required = false) String color,
+            @Parameter(description = "Search by name or brand")
+            @RequestParam(required = false) String searchQuery,
             @Parameter(description = "Page number (0-indexed)")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Number of items per page")
@@ -123,13 +125,14 @@ public class ClothingItemController {
             Authentication authentication) {
 
         Long userId = extractUserId(authentication);
-        log.debug("Getting clothing items for user {} with filters: category={}, season={}, color={}", 
-                userId, category, season, color);
+        log.debug("Getting clothing items for user {} with filters: category={}, season={}, color={}, searchQuery={}", 
+                userId, category, season, color, searchQuery);
 
         ClothingItemFilter filter = ClothingItemFilter.builder()
                 .category(category)
                 .season(season)
                 .color(color)
+                .searchQuery(searchQuery)
                 .build();
 
         Pageable pageable = PageRequest.of(page, size);
