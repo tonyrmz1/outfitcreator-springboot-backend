@@ -8,6 +8,7 @@ import com.example.outfitcreator.recommendation.dto.OutfitRecommendation;
 import com.example.outfitcreator.recommendation.dto.RecommendationRequest;
 import com.example.outfitcreator.repository.ClothingItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,6 +23,9 @@ import java.util.stream.Collectors;
 public class RecommendationEngine {
     
     private final ClothingItemRepository clothingItemRepository;
+    
+    @Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
     
     /**
      * Calculate color compatibility score between two clothing items.
@@ -514,11 +518,26 @@ public class RecommendationEngine {
             .season(item.getSeason())
             .fitCategory(item.getFitCategory())
             .purchaseDate(item.getPurchaseDate())
-            .photoUrl(item.getPhotoPath())
+            .photoUrl(generatePhotoUrl(item.getPhotoPath()))
             .wearCount(item.getWearCount())
             .createdAt(item.getCreatedAt())
             .updatedAt(item.getUpdatedAt())
             .build();
+    }
+
+    /**
+     * Generate the full photo URL from the photo path.
+     *
+     * @param photoPath the photo path
+     * @return the full photo URL, or null if photoPath is null
+     */
+    private String generatePhotoUrl(String photoPath) {
+        if (photoPath == null) {
+            return null;
+        }
+        // Extract filename from path (handle both / and \ separators)
+        String filename = photoPath.replace("\\", "/").substring(photoPath.replace("\\", "/").lastIndexOf('/') + 1);
+        return String.format("%s/api/photos/%s", baseUrl, filename);
     }
 
 
