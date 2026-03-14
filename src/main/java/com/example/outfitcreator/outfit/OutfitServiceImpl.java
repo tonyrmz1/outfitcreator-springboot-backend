@@ -127,13 +127,58 @@ public class OutfitServiceImpl implements OutfitService {
             throw new ForbiddenException("Access denied");
         }
 
-        // Update name and notes only
+        // Validate items if provided (before any database changes)
+        List<ClothingItem> validatedItems = new ArrayList<>();
+        if (request.getItems() != null && !request.getItems().isEmpty()) {
+            for (CreateOutfitRequest.OutfitItemRequest itemRequest : request.getItems()) {
+                // Check if clothing item exists
+                ClothingItem clothingItem = clothingItemRepository.findById(itemRequest.getClothingItemId())
+                        .orElseThrow(() -> new ValidationException(
+                                "Clothing item not found with ID: " + itemRequest.getClothingItemId(),
+                                Map.of("clothingItemId", "Item not found: " + itemRequest.getClothingItemId())));
+
+                // Verify item belongs to the authenticated user
+                if (!clothingItem.getUser().getId().equals(userId)) {
+                    throw new ForbiddenException("Access denied");
+                }
+
+                validatedItems.add(clothingItem);
+            }
+        }
+
+        // Update name and notes
         if (request.getName() != null) {
             outfit.setName(request.getName());
         }
         if (request.getNotes() != null) {
             outfit.setNotes(request.getNotes());
         }
+
+        // Replace outfit items if provided
+        if (request.getItems() != null && !request.getItems().isEmpty()) {
+            // Clear existing outfit items
+            outfit.getItems().clear();
+
+            // Add new outfit items from validated items and request positions
+            for (int i = 0; i < validatedItems.size(); i++) {
+                CreateOutfitRequest.OutfitItemRequest itemRequest = request.getItems().get(i);
+                ClothingItem clothingItem = validatedItems.get(i);
+
+                OutfitItem outfitItem = OutfitItem.builder()
+                        .outfit(outfit)
+                        .clothingItem(clothingItem)
+                        .position(itemRequest.getPosition())
+                        .build();
+
+                outfit.getItems().add(outfitItem);
+            }
+
+            // Recalculate compatibility scores when items are updated
+            Map<String, Double> scores = calculateCompatibilityScores(outfit);
+            outfit.setColorCompatibilityScore(scores.get("color"));
+            outfit.setFitCompatibilityScore(scores.get("fit"));
+        }
+
         outfit.setUpdatedAt(LocalDateTime.now());
 
         outfit = outfitRepository.save(outfit);
