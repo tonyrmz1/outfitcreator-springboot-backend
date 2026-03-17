@@ -1,5 +1,7 @@
 package com.example.outfitcreator.feature.closet.controller;
 
+import com.example.outfitcreator.core.enums.ClothingCategory;
+import com.example.outfitcreator.core.enums.Season;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
@@ -48,10 +50,14 @@ public class ClothingItemController {
     public ResponseEntity<Page<ClothingItemDTO>> getAll(
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Number of items per page") @RequestParam(defaultValue = "20") int size,
+            @Parameter(description = "Filter by category") @RequestParam(required = false) ClothingCategory category,
+            @Parameter(description = "Filter by season") @RequestParam(required = false) Season season,
+            @Parameter(description = "Filter by primary color") @RequestParam(required = false) String color,
+            @Parameter(description = "Search by name or brand") @RequestParam(required = false) String searchQuery,
             Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(clothingItemService.getAll(userId, pageable));
+        return ResponseEntity.ok(clothingItemService.getAll(userId, pageable, category, season, color, searchQuery));
     }
 
     @Operation(summary = "Get clothing item by ID", description = "Retrieves a single clothing item by its ID.")

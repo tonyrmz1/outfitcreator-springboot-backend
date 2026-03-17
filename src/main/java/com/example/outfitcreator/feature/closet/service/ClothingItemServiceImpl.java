@@ -2,7 +2,10 @@ package com.example.outfitcreator.feature.closet.service;
 
 import com.example.outfitcreator.core.entity.ClothingItem;
 import com.example.outfitcreator.core.entity.User;
+import com.example.outfitcreator.core.enums.ClothingCategory;
+import com.example.outfitcreator.core.enums.Season;
 import com.example.outfitcreator.feature.auth.repository.UserRepository;
+import jakarta.persistence.criteria.Predicate;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
@@ -14,7 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,8 +55,31 @@ public class ClothingItemServiceImpl implements ClothingItemService {
     }
 
     @Override
-    public Page<ClothingItemDTO> getAll(Long userId, Pageable pageable) {
-        return clothingItemRepository.findByUserId(userId, pageable).map(this::toDTO);
+    public Page<ClothingItemDTO> getAll(Long userId, Pageable pageable,
+                                        ClothingCategory category, Season season,
+                                        String color, String searchQuery) {
+        Specification<ClothingItem> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("user").get("id"), userId));
+            if (category != null) {
+                predicates.add(cb.equal(root.get("category"), category));
+            }
+            if (season != null) {
+                predicates.add(cb.equal(root.get("season"), season));
+            }
+            if (color != null && !color.isBlank()) {
+                String pattern = "%" + color.toLowerCase() + "%";
+                predicates.add(cb.like(cb.lower(root.get("primaryColor")), pattern));
+            }
+            if (searchQuery != null && !searchQuery.isBlank()) {
+                String pattern = "%" + searchQuery.toLowerCase() + "%";
+                Predicate byName = cb.like(cb.lower(root.get("name")), pattern);
+                Predicate byBrand = cb.like(cb.lower(root.get("brand")), pattern);
+                predicates.add(cb.or(byName, byBrand));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        return clothingItemRepository.findAll(spec, pageable).map(this::toDTO);
     }
 
     @Override
