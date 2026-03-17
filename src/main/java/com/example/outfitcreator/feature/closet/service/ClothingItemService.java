@@ -1,5 +1,7 @@
 package com.example.outfitcreator.feature.closet.service;
 
+import com.example.outfitcreator.core.enums.ClothingCategory;
+import com.example.outfitcreator.core.enums.Season;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
@@ -13,7 +15,9 @@ public interface ClothingItemService {
 
     ClothingItemDTO getItem(Long userId, Long id);
 
-    Page<ClothingItemDTO> getAll(Long userId, Pageable pageable);
+    Page<ClothingItemDTO> getAll(Long userId, Pageable pageable,
+                                 ClothingCategory category, Season season,
+                                 String color, String searchQuery);
 
     ClothingItemDTO createItem(Long userId, CreateClothingItemRequest request, MultipartFile photo) throws IOException;
 
