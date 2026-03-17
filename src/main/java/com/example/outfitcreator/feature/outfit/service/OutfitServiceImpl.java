@@ -27,8 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +63,15 @@ public class OutfitServiceImpl implements OutfitService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Validate that no two items occupy the same position
+        Set<Object> positions = new HashSet<>();
+        for (CreateOutfitRequest.OutfitItemRequest itemRequest : request.getItems()) {
+            if (itemRequest.getPosition() != null && !positions.add(itemRequest.getPosition())) {
+                throw new ValidationException("Duplicate position in outfit",
+                        Map.of("position", "Each position can only appear once per outfit"));
+            }
+        }
 
         List<ClothingItem> clothingItems = new ArrayList<>();
         for (CreateOutfitRequest.OutfitItemRequest itemRequest : request.getItems()) {
@@ -217,11 +228,7 @@ public class OutfitServiceImpl implements OutfitService {
     public void handleClothingItemDeletion(Long itemId) {
         log.info("Handling clothing item deletion for item {}", itemId);
 
-        List<Outfit> affectedOutfits = outfitRepository.findAll().stream()
-                .filter(outfit -> outfit.getItems().stream()
-                        .anyMatch(outfitItem -> outfitItem.getClothingItem() != null 
-                                && outfitItem.getClothingItem().getId().equals(itemId)))
-                .collect(Collectors.toList());
+        List<Outfit> affectedOutfits = outfitRepository.findByItemsClothingItemId(itemId);
 
         for (Outfit outfit : affectedOutfits) {
             outfit.setIsComplete(false);
@@ -341,11 +348,7 @@ public class OutfitServiceImpl implements OutfitService {
     public void recalculateScoresForItem(Long itemId) {
         log.info("Recalculating compatibility scores for outfits containing item {}", itemId);
 
-        List<Outfit> affectedOutfits = outfitRepository.findAll().stream()
-                .filter(outfit -> outfit.getItems().stream()
-                        .anyMatch(outfitItem -> outfitItem.getClothingItem() != null 
-                                && outfitItem.getClothingItem().getId().equals(itemId)))
-                .collect(Collectors.toList());
+        List<Outfit> affectedOutfits = outfitRepository.findByItemsClothingItemId(itemId);
 
         for (Outfit outfit : affectedOutfits) {
             Map<String, Double> scores = calculateCompatibilityScores(outfit);

@@ -12,4 +12,6 @@ public interface FeatureOutfitRepository extends JpaRepository<Outfit, Long> {
     List<Outfit> findByUserId(Long userId);
     
     Page<Outfit> findByUserId(Long userId, Pageable pageable);
+
+    List<Outfit> findByItemsClothingItemId(Long clothingItemId);
 }

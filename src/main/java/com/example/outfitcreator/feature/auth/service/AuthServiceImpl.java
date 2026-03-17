@@ -8,6 +8,9 @@ import com.example.outfitcreator.feature.auth.dto.response.UserDTO;
 import com.example.outfitcreator.core.entity.User;
 import com.example.outfitcreator.feature.auth.repository.UserRepository;
 import com.example.outfitcreator.infrastructure.security.JwtUtil;
+import com.example.outfitcreator.shared.exception.ResourceNotFoundException;
+import com.example.outfitcreator.shared.exception.UnauthorizedException;
+import com.example.outfitcreator.shared.exception.ValidationException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,7 +45,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserDTO register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new ValidationException("Email already in use",
+                    java.util.Map.of("email", "An account with this email already exists"));
         }
 
         User user = User.builder()
@@ -69,13 +73,13 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
         if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         User user = userOptional.get();
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         String token = jwtUtil.generateToken(user.getId(), user.getEmail());
@@ -96,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResourceNotFoundException("User not found");
         }
 
         User user = userOptional.get();
@@ -118,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResourceNotFoundException("User not found");
         }
 
         User user = userOptional.get();

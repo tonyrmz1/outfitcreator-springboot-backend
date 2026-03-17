@@ -21,7 +21,9 @@ import java.time.LocalDateTime;
             @Index(name = "idx_clothing_items_user_id", columnList = "user_id"),
             @Index(name = "idx_clothing_items_category", columnList = "category"),
             @Index(name = "idx_clothing_items_season", columnList = "season"),
-            @Index(name = "idx_clothing_items_primary_color", columnList = "primary_color")
+            @Index(name = "idx_clothing_items_primary_color", columnList = "primary_color"),
+            @Index(name = "idx_clothing_items_user_category", columnList = "user_id, category"),
+            @Index(name = "idx_clothing_items_user_season", columnList = "user_id, season")
         })
 @Data
 @NoArgsConstructor

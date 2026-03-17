@@ -7,7 +7,6 @@ import com.example.outfitcreator.feature.auth.dto.response.LoginResponse;
 import com.example.outfitcreator.feature.auth.dto.response.UserDTO;
 import com.example.outfitcreator.shared.exception.ErrorResponse;
 import com.example.outfitcreator.feature.auth.service.AuthService;
-import com.example.outfitcreator.infrastructure.security.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,11 +29,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtUtil jwtUtil;
 
-    public AuthController(AuthService authService, JwtUtil jwtUtil) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.jwtUtil = jwtUtil;
     }
 
     /**
