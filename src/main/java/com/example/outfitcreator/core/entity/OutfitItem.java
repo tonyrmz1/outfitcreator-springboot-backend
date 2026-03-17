@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
         indexes = {
             @Index(name = "idx_outfit_items_outfit_id", columnList = "outfit_id"),
             @Index(name = "idx_outfit_items_clothing_item_id", columnList = "clothing_item_id")
+        },
+        uniqueConstraints = {
+            @UniqueConstraint(name = "uq_outfit_items_outfit_position", columnNames = {"outfit_id", "position"})
         })
 @Data
 @NoArgsConstructor

@@ -68,10 +68,21 @@ public class PhotoController {
             @Parameter(description = "Photo filename (e.g., item_123_1234567890.jpg)")
             @PathVariable String filename) {
         try {
-            // Construct the file path
-            Path filePath = Paths.get(basePath, "photos", filename);
+            // Reject filenames containing path separators or traversal sequences
+            if (filename.contains("/") || filename.contains("\\") || filename.contains("..")) {
+                return ResponseEntity.badRequest().build();
+            }
 
-            log.info("Attempting to load photo from: {}", filePath.toAbsolutePath());
+            Path photosDir = Paths.get(basePath, "photos").toAbsolutePath().normalize();
+            Path filePath = photosDir.resolve(filename).normalize();
+
+            // Ensure the resolved path stays within the photos directory
+            if (!filePath.startsWith(photosDir)) {
+                log.warn("Path traversal attempt detected for filename: {}", filename);
+                return ResponseEntity.badRequest().build();
+            }
+
+            log.info("Attempting to load photo from: {}", filePath);
 
             // Check if file exists
             if (!Files.exists(filePath)) {
