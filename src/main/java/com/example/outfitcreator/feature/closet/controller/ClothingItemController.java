@@ -56,8 +56,8 @@ public class ClothingItemController {
             @Parameter(description = "Number of items per page") @RequestParam(defaultValue = "20") int size,
             @Parameter(description = "Filter by category") @RequestParam(required = false) ClothingCategory category,
             @Parameter(description = "Filter by season") @RequestParam(required = false) Season season,
-            @Parameter(description = "Filter by color") @RequestParam(required = false) @Size(max = 50) String color,
-            @Parameter(description = "Search by name or brand") @RequestParam(required = false) @Size(max = 100) String searchQuery,
+            @Parameter(description = "Filter by primary color") @RequestParam(required = false) String color,
+            @Parameter(description = "Search by name or brand") @RequestParam(required = false) String searchQuery,
             Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
         ClothingItemFilter filter = ClothingItemFilter.builder()
@@ -67,7 +67,7 @@ public class ClothingItemController {
                 .searchQuery(searchQuery)
                 .build();
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(clothingItemService.getAll(userId, filter, pageable));
+        return ResponseEntity.ok(clothingItemService.getAll(userId, pageable, category, season, color, searchQuery));
     }
 
     @Operation(summary = "Get clothing item by ID", description = "Retrieves a single clothing item by its ID.")
