@@ -3,6 +3,7 @@ package com.example.outfitcreator.feature.closet.service;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
+import com.example.outfitcreator.feature.closet.dto.response.ClothingItemFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +14,7 @@ public interface ClothingItemService {
 
     ClothingItemDTO getItem(Long userId, Long id);
 
-    Page<ClothingItemDTO> getAll(Long userId, Pageable pageable);
+    Page<ClothingItemDTO> getAll(Long userId, ClothingItemFilter filter, Pageable pageable);
 
     ClothingItemDTO createItem(Long userId, CreateClothingItemRequest request, MultipartFile photo) throws IOException;
 

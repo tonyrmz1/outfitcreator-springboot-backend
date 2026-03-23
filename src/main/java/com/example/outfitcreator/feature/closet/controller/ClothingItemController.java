@@ -1,8 +1,11 @@
 package com.example.outfitcreator.feature.closet.controller;
 
+import com.example.outfitcreator.core.enums.ClothingCategory;
+import com.example.outfitcreator.core.enums.Season;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
+import com.example.outfitcreator.feature.closet.dto.response.ClothingItemFilter;
 import com.example.outfitcreator.feature.closet.service.ClothingItemService;
 import com.example.outfitcreator.shared.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,10 +54,20 @@ public class ClothingItemController {
     public ResponseEntity<Page<ClothingItemDTO>> getAll(
             @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Number of items per page") @RequestParam(defaultValue = "20") int size,
+            @Parameter(description = "Filter by category") @RequestParam(required = false) ClothingCategory category,
+            @Parameter(description = "Filter by season") @RequestParam(required = false) Season season,
+            @Parameter(description = "Filter by color") @RequestParam(required = false) @Size(max = 50) String color,
+            @Parameter(description = "Search by name or brand") @RequestParam(required = false) @Size(max = 100) String searchQuery,
             Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
+        ClothingItemFilter filter = ClothingItemFilter.builder()
+                .category(category)
+                .season(season)
+                .color(color)
+                .searchQuery(searchQuery)
+                .build();
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(clothingItemService.getAll(userId, pageable));
+        return ResponseEntity.ok(clothingItemService.getAll(userId, filter, pageable));
     }
 
     @Operation(summary = "Get clothing item by ID", description = "Retrieves a single clothing item by its ID.")

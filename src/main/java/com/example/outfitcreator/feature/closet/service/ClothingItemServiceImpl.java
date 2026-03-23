@@ -6,7 +6,9 @@ import com.example.outfitcreator.feature.auth.repository.UserRepository;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
+import com.example.outfitcreator.feature.closet.dto.response.ClothingItemFilter;
 import com.example.outfitcreator.feature.closet.repository.ClothingItemRepository;
+import com.example.outfitcreator.feature.closet.repository.ClothingItemSpecification;
 import com.example.outfitcreator.feature.photo.service.PhotoService;
 import com.example.outfitcreator.feature.photo.service.PhotoUrlService;
 import com.example.outfitcreator.shared.exception.ResourceNotFoundException;
@@ -48,8 +50,9 @@ public class ClothingItemServiceImpl implements ClothingItemService {
     }
 
     @Override
-    public Page<ClothingItemDTO> getAll(Long userId, Pageable pageable) {
-        return clothingItemRepository.findByUserId(userId, pageable).map(this::toDTO);
+    public Page<ClothingItemDTO> getAll(Long userId, ClothingItemFilter filter, Pageable pageable) {
+        return clothingItemRepository.findAll(ClothingItemSpecification.withFilters(userId, filter), pageable)
+                .map(this::toDTO);
     }
 
     @Override
