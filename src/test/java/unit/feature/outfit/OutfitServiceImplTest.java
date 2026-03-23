@@ -377,24 +377,23 @@ class OutfitServiceImplTest {
             OutfitItem outfitItem = OutfitTestFixtures.createOutfitItem(1L, testOutfit, testTop, ItemPosition.TOP);
             testOutfit.getItems().add(outfitItem);
 
-            when(outfitRepository.findAll()).thenReturn(List.of(testOutfit));
+            when(outfitRepository.findByItemsClothingItemId(1L)).thenReturn(List.of(testOutfit));
             when(outfitRepository.save(any(Outfit.class))).thenReturn(testOutfit);
 
             outfitService.handleClothingItemDeletion(1L);
 
-            verify(outfitRepository).findAll();
+            verify(outfitRepository).findByItemsClothingItemId(1L);
             verify(outfitRepository).save(argThat(outfit -> !outfit.getIsComplete()));
         }
 
         @Test
         @DisplayName("Should not affect outfits not containing the deleted item")
         void shouldNotAffectOutfitsNotContainingDeletedItem() {
-            Outfit otherOutfit = OutfitTestFixtures.createTestOutfit(2L, testUser);
-            when(outfitRepository.findAll()).thenReturn(List.of(otherOutfit));
+            when(outfitRepository.findByItemsClothingItemId(999L)).thenReturn(List.of());
 
             outfitService.handleClothingItemDeletion(999L);
 
-            verify(outfitRepository).findAll();
+            verify(outfitRepository).findByItemsClothingItemId(999L);
             verify(outfitRepository, never()).save(any());
         }
     }
@@ -460,7 +459,7 @@ class OutfitServiceImplTest {
             outfitItem.setPosition(ItemPosition.TOP);
             outfitWithItems.getItems().add(outfitItem);
 
-            when(outfitRepository.findAll()).thenReturn(List.of(outfitWithItems));
+            when(outfitRepository.findByItemsClothingItemId(1L)).thenReturn(List.of(outfitWithItems));
             when(outfitRepository.save(any(Outfit.class))).thenAnswer(inv -> {
                 Outfit saved = inv.getArgument(0);
                 saved.setColorCompatibilityScore(75.0);
@@ -470,18 +469,18 @@ class OutfitServiceImplTest {
 
             outfitService.recalculateScoresForItem(1L);
 
-            verify(outfitRepository).findAll();
+            verify(outfitRepository).findByItemsClothingItemId(1L);
             verify(outfitRepository).save(any(Outfit.class));
         }
 
         @Test
         @DisplayName("Should not recalculate scores for outfits not containing item")
         void shouldNotRecalculateScoresForOutfitsNotContainingItem() {
-            when(outfitRepository.findAll()).thenReturn(List.of(testOutfit));
+            when(outfitRepository.findByItemsClothingItemId(999L)).thenReturn(List.of());
 
             outfitService.recalculateScoresForItem(999L);
 
-            verify(outfitRepository).findAll();
+            verify(outfitRepository).findByItemsClothingItemId(999L);
             verify(outfitRepository, never()).save(any());
         }
     }

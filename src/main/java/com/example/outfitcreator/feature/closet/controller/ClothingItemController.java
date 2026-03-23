@@ -5,6 +5,7 @@ import com.example.outfitcreator.core.enums.Season;
 import com.example.outfitcreator.feature.closet.dto.request.CreateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.request.UpdateClothingItemRequest;
 import com.example.outfitcreator.feature.closet.dto.response.ClothingItemDTO;
+import com.example.outfitcreator.feature.closet.dto.response.ClothingItemFilter;
 import com.example.outfitcreator.feature.closet.service.ClothingItemService;
 import com.example.outfitcreator.shared.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +60,12 @@ public class ClothingItemController {
             @Parameter(description = "Search by name or brand") @RequestParam(required = false) String searchQuery,
             Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
+        ClothingItemFilter filter = ClothingItemFilter.builder()
+                .category(category)
+                .season(season)
+                .color(color)
+                .searchQuery(searchQuery)
+                .build();
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(clothingItemService.getAll(userId, pageable, category, season, color, searchQuery));
     }
