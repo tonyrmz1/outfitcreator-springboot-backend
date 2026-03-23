@@ -154,7 +154,12 @@ public class OutfitServiceImpl implements OutfitService {
         }
 
         if (request.getItems() != null && !request.getItems().isEmpty()) {
+            // Clear orphaned items and flush immediately so Hibernate executes the
+            // orphanRemoval DELETEs before the subsequent INSERTs. This avoids the
+            // unique constraint violation on (outfit_id, position) caused by
+            // Hibernate's default flush order (INSERTs before DELETEs).
             outfit.getItems().clear();
+            outfitRepository.saveAndFlush(outfit);
 
             for (int i = 0; i < validatedItems.size(); i++) {
                 CreateOutfitRequest.OutfitItemRequest itemRequest = request.getItems().get(i);
