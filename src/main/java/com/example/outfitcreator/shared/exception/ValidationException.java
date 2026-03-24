@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
+/**
+ * Validation failure with optional per-field messages (HTTP 400).
+ */
 @Getter
 public class ValidationException extends OutfitCreatorException {
     private final Map<String, String> fieldErrors;

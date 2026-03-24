@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * Standard API error payload returned by {@link GlobalExceptionHandler}.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

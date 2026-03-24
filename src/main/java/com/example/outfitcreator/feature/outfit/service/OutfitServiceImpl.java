@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Default {@link OutfitService}: validates ownership and positions, persists outfits, and coordinates recommendation scoring.
+ */
 @Service
 public class OutfitServiceImpl implements OutfitService {
 
@@ -46,6 +49,12 @@ public class OutfitServiceImpl implements OutfitService {
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
+    /**
+     * @param outfitRepository        outfit persistence
+     * @param clothingItemRepository  for resolving items in outfit payloads
+     * @param userRepository          outfit owner
+     * @param recommendationEngine    color/fit scoring for stored outfits
+     */
     public OutfitServiceImpl(FeatureOutfitRepository outfitRepository,
                             ClothingItemRepository clothingItemRepository,
                             UserRepository userRepository,
@@ -56,7 +65,6 @@ public class OutfitServiceImpl implements OutfitService {
         this.recommendationEngine = recommendationEngine;
     }
 
-    // Method to create an outfit
     @Override
     @Transactional
     public OutfitDTO create(Long userId, CreateOutfitRequest request) {

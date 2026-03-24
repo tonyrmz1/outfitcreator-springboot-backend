@@ -22,6 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST API for creating, updating, listing, and deleting user outfits built from closet items.
+ */
 @RestController
 @RequestMapping("/api/outfits")
 @Tag(name = "Outfits", description = "Outfit creation and management - combine clothing items into complete outfits")
@@ -30,6 +33,9 @@ public class OutfitController {
 
     private final OutfitService outfitService;
 
+    /**
+     * @param outfitService outfit domain service
+     */
     public OutfitController(OutfitService outfitService) {
         this.outfitService = outfitService;
     }

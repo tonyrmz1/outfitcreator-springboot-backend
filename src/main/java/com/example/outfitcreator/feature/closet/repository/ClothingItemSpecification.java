@@ -10,10 +10,19 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Builds JPA {@link Specification} instances for dynamic closet filtering (category, season, color, text search).
+ */
 public class ClothingItemSpecification {
 
     private ClothingItemSpecification() {}
 
+    /**
+     * Restricts results to the given user and applies optional filter criteria from {@link ClothingItemFilter}.
+     *
+     * @param userId owner user id (required)
+     * @param filter optional filter; {@code null} means no extra predicates beyond user scope
+     */
     public static Specification<ClothingItem> withFilters(Long userId, ClothingItemFilter filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

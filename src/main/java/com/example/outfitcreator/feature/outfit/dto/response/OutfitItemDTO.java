@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * One slot in an outfit: links a {@link ClothingItemDTO} to an {@link com.example.outfitcreator.core.enums.ItemPosition}.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

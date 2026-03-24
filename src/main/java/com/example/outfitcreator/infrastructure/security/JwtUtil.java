@@ -12,7 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
- * Utility class for JWT token generation and validation.
+ * Signs and parses JWT access tokens (HS256) using {@code jwt.secret} and {@code jwt.expiration}.
+ * Claims include subject = user id and {@code email}.
  */
 @Component
 public class JwtUtil {
@@ -28,6 +29,13 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Builds a signed JWT for the given user.
+     *
+     * @param userId subject
+     * @param email  additional claim
+     * @return compact JWT string
+     */
     public String generateToken(Long userId, String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
@@ -41,6 +49,10 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * @param token signed JWT
+     * @return user id from subject claim
+     */
     public Long extractUserId(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -51,6 +63,10 @@ public class JwtUtil {
         return Long.parseLong(claims.getSubject());
     }
 
+    /**
+     * @param token signed JWT
+     * @return email claim
+     */
     public String extractEmail(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -61,6 +77,10 @@ public class JwtUtil {
         return claims.get("email", String.class);
     }
 
+    /**
+     * @param token raw JWT
+     * @return {@code true} if signature and structure are valid and not expired
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()

@@ -29,6 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * Default {@link ClothingItemService} implementation: persistence, photo storage, and DTO mapping.
+ */
 @Service
 public class ClothingItemServiceImpl implements ClothingItemService {
 
@@ -39,6 +42,12 @@ public class ClothingItemServiceImpl implements ClothingItemService {
     private final PhotoService photoService;
     private final PhotoUrlService photoUrlService;
 
+    /**
+     * @param clothingItemRepository closet persistence
+     * @param userRepository         for resolving item owner
+     * @param photoService           file upload and deletion
+     * @param photoUrlService        public URL generation for API responses
+     */
     public ClothingItemServiceImpl(ClothingItemRepository clothingItemRepository,
                                    UserRepository userRepository,
                                    PhotoService photoService,

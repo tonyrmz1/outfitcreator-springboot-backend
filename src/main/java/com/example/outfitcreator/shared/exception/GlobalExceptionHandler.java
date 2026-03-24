@@ -15,11 +15,15 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Maps exceptions to consistent JSON {@link ErrorResponse} bodies and HTTP status codes.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /** Handles domain exceptions with optional field errors ({@link ValidationException}). */
     @ExceptionHandler(OutfitCreatorException.class)
     public ResponseEntity<ErrorResponse> handleOutfitCreatorException(
             OutfitCreatorException ex,
@@ -43,6 +47,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getHttpStatus()).body(response);
     }
 
+    /** Bean Validation failures on {@code @Valid} request bodies ({@code @RequestBody}). */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex,
@@ -69,6 +74,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    /** Constraint violations on method parameters (e.g. {@code @RequestParam} / {@code @PathVariable}). */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(
             ConstraintViolationException ex,
@@ -95,6 +101,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    /** Fallback for uncaught errors; avoids leaking internals in the client-facing message. */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex,

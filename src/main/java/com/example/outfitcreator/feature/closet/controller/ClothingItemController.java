@@ -31,6 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * REST API for the authenticated user's clothing closet: CRUD, filtering, search, and photo upload.
+ */
 @RestController
 @RequestMapping("/api/clothing")
 @Tag(name = "Closet", description = "Clothing item management - add, view, update and delete items in your digital closet")
@@ -40,10 +43,16 @@ public class ClothingItemController {
 
     private final ClothingItemService clothingItemService;
 
+    /**
+     * @param clothingItemService domain service for closet operations
+     */
     public ClothingItemController(ClothingItemService clothingItemService) {
         this.clothingItemService = clothingItemService;
     }
-// Method to get all clothing items
+
+    /**
+     * Lists clothing items for the current user with optional filters and pagination.
+     */
     @Operation(summary = "Get all clothing items", description = "Retrieves all clothing items for the authenticated user with pagination support.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items retrieved successfully"),
