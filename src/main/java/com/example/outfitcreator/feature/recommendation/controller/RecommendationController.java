@@ -31,6 +31,9 @@ public class RecommendationController {
 
     private final RecommendationService recommendationService;
 
+    /**
+     * @param recommendationService generates ranked outfit suggestions from the user's closet
+     */
     public RecommendationController(RecommendationService recommendationService) {
         this.recommendationService = recommendationService;
     }

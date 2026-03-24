@@ -8,9 +8,15 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * springdoc-openapi configuration: API metadata and global JWT bearer security scheme.
+ */
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * @return OpenAPI document exposed at {@code /v3/api-docs} and used by Swagger UI
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";

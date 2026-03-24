@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Partial update for an outfit; all fields optional. When {@code items} is present, it replaces the outfit composition.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

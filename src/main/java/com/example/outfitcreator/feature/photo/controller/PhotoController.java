@@ -29,6 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Serves stored clothing photos by filename with path-traversal checks; upload is handled via closet endpoints.
+ */
 @RestController
 @RequestMapping("/api/photos")
 @Tag(name = "Photos", description = "Photo retrieval endpoints for clothing item images")

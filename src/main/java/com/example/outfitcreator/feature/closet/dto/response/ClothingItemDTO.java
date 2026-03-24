@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * API representation of a {@link com.example.outfitcreator.core.entity.ClothingItem}, including derived photo URLs.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

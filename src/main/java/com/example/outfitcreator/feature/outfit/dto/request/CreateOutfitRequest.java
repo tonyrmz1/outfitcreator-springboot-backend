@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Validated payload to create an outfit: name, notes, and one entry per clothing item with slot position.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +38,9 @@ public class CreateOutfitRequest {
     @Valid
     private List<OutfitItemRequest> items;
 
+    /**
+     * Single line in an outfit create payload: which closet item and which body slot it occupies.
+     */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

@@ -17,6 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
+/**
+ * Filesystem-backed {@link PhotoService} with type/size limits, optional downscaling, and thumbnail generation.
+ */
 @Service
 public class PhotoServiceImpl implements PhotoService {
 

@@ -17,6 +17,9 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class CacheConfig {
 
+    /**
+     * Registers named caches {@code users} and {@code colorWheel} with Caffeine eviction and access TTL.
+     */
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("users", "colorWheel");
@@ -31,6 +34,9 @@ public class CacheConfig {
                 .recordStats();
     }
 
+    /**
+     * Standalone Caffeine builder bean for components that need a dedicated color-wheel cache instance.
+     */
     @Bean
     public Caffeine<Object, Object> colorWheelCacheBuilder() {
         return Caffeine.newBuilder()

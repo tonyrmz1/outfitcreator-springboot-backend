@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Validated payload for updating an existing clothing item's metadata.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

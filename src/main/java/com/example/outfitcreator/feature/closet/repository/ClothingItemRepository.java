@@ -12,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Persistence access for {@link ClothingItem}, including user-scoped queries and outfit membership checks.
+ */
 public interface ClothingItemRepository extends JpaRepository<ClothingItem, Long>, JpaSpecificationExecutor<ClothingItem> {
 
     List<ClothingItem> findByUserId(Long userId);
@@ -31,6 +34,10 @@ public interface ClothingItemRepository extends JpaRepository<ClothingItem, Long
                                                       @Param("category") com.example.outfitcreator.core.enums.ClothingCategory category,
                                                       @Param("season") com.example.outfitcreator.core.enums.Season season);
 
+    /**
+     * @param itemId clothing item primary key
+     * @return {@code true} if the item appears in at least one {@link com.example.outfitcreator.core.entity.OutfitItem}
+     */
     @Query("SELECT CASE WHEN COUNT(oi) > 0 THEN true ELSE false END FROM OutfitItem oi WHERE oi.clothingItem.id = :itemId")
     boolean existsInOutfits(@Param("itemId") Long itemId);
 }

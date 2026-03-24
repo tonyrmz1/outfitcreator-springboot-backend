@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Optional filter criteria used when listing closet items (category, season, color, text search).
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

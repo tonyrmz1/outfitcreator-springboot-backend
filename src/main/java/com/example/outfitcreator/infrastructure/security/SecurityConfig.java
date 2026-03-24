@@ -20,8 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Security configuration for the OutfitCreator application.
- * Configures JWT-based authentication, CORS, and security filter chain.
+ * Spring Security configuration: stateless JWT auth, CORS, security headers, and route rules.
+ * <p>
+ * Public paths include auth registration/login, static photo URLs, and OpenAPI/Swagger UI.
+ * All other {@code /api/**} routes require an authenticated principal (JWT).
  */
 @Configuration
 @EnableWebSecurity
@@ -44,15 +46,28 @@ public class SecurityConfig {
     @Value("${cors.max-age}")
     private long maxAge;
 
+    /**
+     * @param jwtAuthenticationFilter runs before username/password auth and populates the security context from JWT
+     */
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    /**
+     * Password hasher for user credentials (BCrypt).
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Defines the HTTP security filter chain: CSRF off (API + JWT), CORS, headers, session stateless, JWT filter.
+     *
+     * @param http security DSL entry
+     * @return configured filter chain
+     * @throws Exception if configuration fails
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -82,6 +97,9 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * CORS setup from {@code cors.*} application properties (origins, methods, headers, credentials).
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

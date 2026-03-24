@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * API representation of an {@link com.example.outfitcreator.core.entity.Outfit} with nested items and compatibility metadata.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

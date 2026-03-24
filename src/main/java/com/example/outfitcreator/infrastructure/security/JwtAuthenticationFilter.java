@@ -16,8 +16,9 @@ import java.io.IOException;
 import java.util.Collections;
 
 /**
- * JWT Authentication Filter that extracts and validates JWT tokens from HTTP requests.
- * This filter runs once per request and sets the authentication in the SecurityContext.
+ * Servlet filter (once per request) that turns a valid {@code Authorization: Bearer} JWT into a
+ * {@link org.springframework.security.core.context.SecurityContext} principal (user id).
+ * Invalid, missing, or stale-user tokens leave the context unchanged so the request can still hit permit-all routes.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,11 +26,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    /**
+     * @param jwtUtil            parses and validates tokens
+     * @param userRepository     lazy to break circular dependency with security beans; used to ensure user still exists
+     */
     public JwtAuthenticationFilter(JwtUtil jwtUtil, @Lazy UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Extracts Bearer token, validates it, loads user id, and sets an authenticated token with empty authorities
+     * (authorization is enforced as authenticated vs anonymous at the HTTP layer).
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

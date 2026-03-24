@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Validated payload for creating a clothing item (multipart create endpoint).
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
