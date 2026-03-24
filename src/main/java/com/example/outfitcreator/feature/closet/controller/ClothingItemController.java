@@ -43,7 +43,7 @@ public class ClothingItemController {
     public ClothingItemController(ClothingItemService clothingItemService) {
         this.clothingItemService = clothingItemService;
     }
-
+// Method to get all clothing items
     @Operation(summary = "Get all clothing items", description = "Retrieves all clothing items for the authenticated user with pagination support.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items retrieved successfully"),

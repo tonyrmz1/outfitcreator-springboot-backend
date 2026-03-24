@@ -122,7 +122,8 @@ class ClothingItemServiceImplTest {
             when(clothingItemRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(itemPage);
             when(photoUrlService.generatePhotoUrl(any())).thenReturn(null);
 
-            Page<ClothingItemDTO> result = clothingItemService.getAll(1L, null, pageable);
+            Page<ClothingItemDTO> result = clothingItemService.getAll(
+                    1L, pageable, null, null, null, null);
 
             assertThat(result.getTotalElements()).isEqualTo(1);
             assertThat(result.getContent()).hasSize(1);

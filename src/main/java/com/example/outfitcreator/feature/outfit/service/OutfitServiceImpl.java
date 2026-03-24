@@ -56,6 +56,7 @@ public class OutfitServiceImpl implements OutfitService {
         this.recommendationEngine = recommendationEngine;
     }
 
+    // Method to create an outfit
     @Override
     @Transactional
     public OutfitDTO create(Long userId, CreateOutfitRequest request) {
