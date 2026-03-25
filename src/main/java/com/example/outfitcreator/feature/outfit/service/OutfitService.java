@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * Application service for {@link com.example.outfitcreator.core.entity.Outfit} lifecycle and consistency with closet changes.
+ * @author Antonio Marin Belmonte
  */
 public interface OutfitService {
 
