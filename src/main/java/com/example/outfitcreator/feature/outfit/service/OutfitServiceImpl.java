@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 /**
  * Default {@link OutfitService}: validates ownership and positions, persists outfits, and coordinates recommendation scoring.
+ * @author Antonio Marin Belmonte
  */
 @Service
 public class OutfitServiceImpl implements OutfitService {
