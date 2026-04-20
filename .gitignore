@@ -37,6 +37,7 @@ build/
 .env.*
 application-local.properties
 application-local-*.properties
+src/environments/
 
 ### Uploaded files ###
 storage/
