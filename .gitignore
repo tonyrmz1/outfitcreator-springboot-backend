@@ -43,3 +43,6 @@ storage/
 
 ### MD files
 *.md
+
+### Kiro
+.kiro*
